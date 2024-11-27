@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String
+  password         String
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  carts            Cart[]
+  transactions     Transaction[]
+
+  @@map("users")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  image       String?
+  name        String
+  description String?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  category_id Int
+  image       String?
+  barcode     String @unique
+  title       String
+  description String?
+  buy_price   Float
+  sell_price  Float
+  stock       Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  category    Category   @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  transaction_details TransactionDetail[]
+  carts       Cart[]
+
+  @@map("products")
+}
+
+model Cart {
+  id          Int       @id @default(autoincrement())
+  cashier_id  Int
+  product_id  Int
+  qty         Int
+  price       Float
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  cashier     User     @relation(fields: [cashier_id], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("carts")
+}
+
+model Transaction {
+  id           Int       @id @default(autoincrement())
+  cashier_id   Int
+  customer_id  Int?
+  invoice      String
+  cash         Float
+  change       Float
+  discount     Float?
+  grand_total  Float
+  created_at   DateTime  @default(now())
+  cashier      User     @relation(fields: [cashier_id], references: [id], onDelete: Cascade)
+  customer     Customer? @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  transaction_details TransactionDetail[]
+  profits       Profit[]
+
+  @@map("transactions")
+}
+
+model TransactionDetail {
+  id            Int       @id @default(autoincrement())
+  transaction_id Int
+  product_id    Int
+  qty           Int
+  price         Float
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  transaction   Transaction @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
+  product       Product     @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("transaction_details")
+}
+
+model Customer {
+  id          Int       @id @default(autoincrement())
+  name        String
+  no_telp     String
+  address     String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  transactions Transaction[]
+
+  @@map("customers")
+}
+
+model Profit {
+  id            Int       @id @default(autoincrement())
+  transaction_id Int
+  total         Float
+  created_at    DateTime  @default(now())
+  transaction   Transaction @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
+
+  @@map("profits")
+}
