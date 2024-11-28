@@ -216,6 +216,40 @@ const updateUser = async (req, res) => {
     }
 };
 
+// Fungsi deleteUser
+const deleteUser = async (req, res) => {
+    // Mendapatkan ID dari parameter
+    const { id } = req.params;
+
+    try {
+        // Menghapus pengguna
+        await prisma.user.delete({
+            where: {
+                id: Number(id),
+            },
+        });
+
+        // Mengirimkan respons
+        res.status(200).send({
+            //meta untuk response json
+            meta: {
+                success: true,
+                message: "Pengguna berhasil dihapus",
+            },
+        });
+    } catch (error) {
+        res.status(500).send({
+            //meta untuk response json
+            meta: {
+                success: false,
+                message: "Terjadi kesalahan di server",
+            },
+            //data errors
+            errors: error,
+        });
+    }
+};
+
 module.exports = {
-    findUsers, createUser, findUserById, updateUser
+    findUsers, createUser, findUserById, updateUser, deleteUser
 };
