@@ -116,6 +116,57 @@ const createUser = async (req, res) => {
     }
 };
 
+// Fungsi findUserById
+const findUserById = async (req, res) => {
+    // Mendapatkan ID dari parameter
+    const { id } = req.params;
+
+    try {
+        // Mengambil pengguna berdasarkan ID
+        const user = await prisma.user.findUnique({
+            where: {
+                id: Number(id),
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+            },
+        });
+
+        if (!user) {
+            return res.status(404).send({
+                //meta untuk response json
+                meta: {
+                    success: false,
+                    message: `Pengguna dengan ID: ${id} tidak ditemukan`,
+                },
+            });
+        }
+
+        // Mengirimkan respons
+        res.status(200).send({
+            //meta untuk response json
+            meta: {
+                success: true,
+                message: `Berhasil mengambil pengguna dengan ID: ${id}`,
+            },
+            //data
+            data: user,
+        });
+    } catch (error) {
+        res.status(500).send({
+            //meta untuk response json
+            meta: {
+                success: false,
+                message: "Terjadi kesalahan di server",
+            },
+            //data errors
+            errors: error,
+        });
+    }
+};
+
 module.exports = {
-    findUsers, createUser
+    findUsers, createUser, findUserById
 };
