@@ -1,34 +1,25 @@
 // Import express
-const express = require("express");
+const express = require('express');
 
 // Init express router
 const router = express.Router();
 
 // Import validators and middleware
-const { validateLogin } = require("../utils/validators");
-const { handleValidationErrors, verifyToken } = require("../middlewares");
+const { validateLogin, validateUser } = require('../utils/validators');
+const { handleValidationErrors, verifyToken } = require('../middlewares');
 
 // Import controllers
-const loginController = require("../controllers/LoginController");
-const userController = require("../controllers/UserController");
+const loginController = require('../controllers/LoginController');
+const userController = require('../controllers/UserController');
 
 // Define routes
 const routes = [
   // Login route
-  {
-    method: "post",
-    path: "/login",
-    middlewares: [validateLogin, handleValidationErrors],
-    handler: loginController.login,
-  },
+  { method: 'post', path: '/login', middlewares: [validateLogin, handleValidationErrors], handler: loginController.login },
 
   // User routes
-  {
-    method: "get",
-    path: "/users",
-    middlewares: [verifyToken],
-    handler: userController.findUsers,
-  },
+  { method: 'get', path: '/users', middlewares: [verifyToken], handler: userController.findUsers },
+  { method: 'post', path: '/users', middlewares: [verifyToken, validateUser, handleValidationErrors], handler: userController.createUser },
 ];
 
 // Helper function to create routes
