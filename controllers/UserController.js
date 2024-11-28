@@ -167,6 +167,55 @@ const findUserById = async (req, res) => {
     }
 };
 
+// Fungsi updateUser
+const updateUser = async (req, res) => {
+    // Mendapatkan ID dari parameter
+    const { id } = req.params;
+
+    // Membuat objek data yang akan diupdate
+    let userData = {
+        name: req.body.name,
+        email: req.body.email,
+        updated_at: new Date(),
+    };
+
+    try {
+        // Only hash and update the password if it's provided
+        if (req.body.password !== "") {
+
+            // Hash password
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+            // Tambahkan password ke objek data
+            userData.password = hashedPassword;
+        }
+
+        // Mengupdate pengguna
+        const user = await prisma.user.update({
+            where: {
+                id: Number(id),
+            },
+            data: userData,
+        });
+
+        res.status(200).send({
+            meta: {
+                success: true,
+                message: "Pengguna berhasil diperbarui",
+            },
+            data: user,
+        });
+    } catch (error) {
+        res.status(500).send({
+            meta: {
+                success: false,
+                message: "Terjadi kesalahan di server",
+            },
+            errors: error,
+        });
+    }
+};
+
 module.exports = {
-    findUsers, createUser, findUserById
+    findUsers, createUser, findUserById, updateUser
 };
