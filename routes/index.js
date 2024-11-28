@@ -20,6 +20,7 @@ const routes = [
   // User routes
   { method: 'get', path: '/users', middlewares: [verifyToken], handler: userController.findUsers },
   { method: 'post', path: '/users', middlewares: [verifyToken, validateUser, handleValidationErrors], handler: userController.createUser },
+  { method: 'get', path: '/users/:id', middlewares: [verifyToken], handler: userController.findUserById },
 ];
 
 // Helper function to create routes
