@@ -11,6 +11,7 @@ const { handleValidationErrors, verifyToken } = require('../middlewares');
 // Import controllers
 const loginController = require('../controllers/LoginController');
 const userController = require('../controllers/UserController');
+const categoryController = require('../controllers/CategoryController');
 
 // Define routes
 const routes = [
@@ -23,6 +24,9 @@ const routes = [
   { method: 'get', path: '/users/:id', middlewares: [verifyToken], handler: userController.findUserById },
   { method: 'put', path: '/users/:id', middlewares: [verifyToken, validateUser, handleValidationErrors], handler: userController.updateUser },
   { method: 'delete', path: '/users/:id', middlewares: [verifyToken], handler: userController.deleteUser },
+
+  // Category routes
+  { method: 'get', path: '/categories', middlewares: [verifyToken], handler: categoryController.findCategories },
 ];
 
 // Helper function to create routes
