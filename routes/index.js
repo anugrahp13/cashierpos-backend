@@ -5,7 +5,7 @@ const express = require('express');
 const router = express.Router();
 
 // Import validators and middleware
-const { validateLogin, validateUser, validateCategory } = require('../utils/validators');
+const { validateLogin, validateUser, validateCategory, validateProduct } = require('../utils/validators');
 const { handleValidationErrors, verifyToken, upload } = require('../middlewares');
 
 // Import controllers
@@ -36,6 +36,11 @@ const routes = [
 
   // Product routes
   { method: 'get', path: '/products', middlewares: [verifyToken], handler: productController.findProducts },
+  { method: 'post', path: '/products', middlewares: [verifyToken, upload.single('image'), validateProduct, handleValidationErrors], handler: productController.createProduct },
+  { method: 'get', path: '/products/:id', middlewares: [verifyToken], handler: productController.findProductById },
+  { method: 'put', path: '/products/:id', middlewares: [verifyToken, upload.single('image'), validateProduct, handleValidationErrors], handler: productController.updateProduct },
+  { method: 'delete', path: '/products/:id', middlewares: [verifyToken], handler: productController.deleteProduct },
+  { method: 'get', path: '/products-by-category/:id', middlewares: [verifyToken], handler: productController.findProductByCategoryId },
 ];
 
 // Helper function to create routes
