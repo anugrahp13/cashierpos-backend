@@ -12,6 +12,7 @@ const { handleValidationErrors, verifyToken, upload } = require('../middlewares'
 const loginController = require('../controllers/LoginController');
 const userController = require('../controllers/UserController');
 const categoryController = require('../controllers/CategoryController');
+const productController = require('../controllers/ProductController');
 
 // Define routes
 const routes = [
@@ -32,6 +33,9 @@ const routes = [
   { method: 'put', path: '/categories/:id', middlewares: [verifyToken, upload.single('image'), validateCategory, handleValidationErrors], handler: categoryController.updateCategory },
   { method: 'delete', path: '/categories/:id', middlewares: [verifyToken], handler: categoryController.deleteCategory },
   { method: 'get', path: '/categories-all', middlewares: [verifyToken], handler: categoryController.allCategories },
+
+  // Product routes
+  { method: 'get', path: '/products', middlewares: [verifyToken], handler: productController.findProducts },
 ];
 
 // Helper function to create routes
